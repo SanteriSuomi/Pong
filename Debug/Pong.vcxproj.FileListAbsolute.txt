@@ -1,1 +1,2 @@
 C:\Users\razor\Desktop\Pong\Pong\Debug\Pong.exe
+C:\Users\razor\Desktop\Pong\Debug\Pong.exe
