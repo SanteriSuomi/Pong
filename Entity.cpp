@@ -7,7 +7,7 @@ Entity::Entity(float x, float y, float width, float height) {
 		x,
 		y
 		});
-	this->size = std::make_unique<Vector2>(Vector2{
+	this->size = std::make_unique<Vector2>(Vector2 {
 		width,
 		height
 		});
@@ -15,10 +15,14 @@ Entity::Entity(float x, float y, float width, float height) {
 
 void Entity::Draw(SDL_Renderer *renderer) const {
 	SDL_Rect rect {
-		static_cast<int>(position.get()->x),
-		static_cast<int>(position.get()->y),
-		static_cast<int>(size.get()->x),
-		static_cast<int>(size.get()->y)
+		static_cast<int>(position->x),
+		static_cast<int>(position->y),
+		static_cast<int>(size->x),
+		static_cast<int>(size->y)
 	};
 	SDL_RenderFillRect(renderer, &rect);
+}
+
+void Entity::Update() {
+	// Overrideable
 }

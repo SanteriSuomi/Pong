@@ -37,9 +37,15 @@ bool Game::Initialize() {
 	return false;
 }
 
-void Game::CreateScene() const {
-	objects.get()->emplace_back(new Wall(0, 0, WINDOW_WIDTH, WALL_THICKNESS));
-	objects.get()->emplace_back(new Wall(0, WINDOW_HEIGHT - WALL_THICKNESS, WINDOW_WIDTH, WALL_THICKNESS));
+void Game::CreateScene() {
+	objects->emplace_back(std::make_unique<Wall>(Wall(0, 0, WINDOW_WIDTH, WALL_THICKNESS)));
+	objects->emplace_back(std::make_unique<Wall>(Wall(0, WINDOW_HEIGHT - WALL_THICKNESS, WINDOW_WIDTH, WALL_THICKNESS)));
+	left = new Paddle(0, WINDOW_HEIGHT / 2 - (PADDLE_HEIGHT / 2), WALL_THICKNESS, PADDLE_HEIGHT);
+	right = new Paddle(WINDOW_WIDTH - WALL_THICKNESS, WINDOW_HEIGHT / 2 - (PADDLE_HEIGHT / 2), WALL_THICKNESS, PADDLE_HEIGHT);
+	objects->emplace_back(left);
+	objects->emplace_back(right);
+	ball = new Ball(WINDOW_WIDTH / 2 - (WALL_THICKNESS / 2), WINDOW_HEIGHT / 2 - (WALL_THICKNESS / 2), WALL_THICKNESS, WALL_THICKNESS, BALL_VEL_X, BALL_VEL_Y);
+	objects->emplace_back(ball);
 }
 
 void Game::Loop() {
@@ -74,7 +80,9 @@ void Game::Input() {
 }
 
 void Game::Update() {
-
+	for (const auto& ent : *objects) {
+		ent->Update();
+	}
 }
 
 void Game::Output() {
@@ -102,7 +110,7 @@ void Game::DrawObjects() {
 		0,
 		255
 	);
-	for (const auto &ent : *objects.get()) {
+	for (const auto &ent : *objects) {
 		ent->Draw(renderer);
 	}
 }
