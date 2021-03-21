@@ -1,4 +1,8 @@
 #include "Game.h"
+#include "Paddle.h"
+#include <memory>
+#include "Wall.h"
+#include "Constants.h"
 
 bool Game::Initialize() {
 	int result = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
@@ -7,8 +11,8 @@ bool Game::Initialize() {
 			"Pong",
 			300,
 			175,
-			1280,
-			720,
+			WINDOW_WIDTH,
+			WINDOW_HEIGHT,
 			0
 		);
 		if (!window) {
@@ -25,10 +29,17 @@ bool Game::Initialize() {
 			return false;
 		}
 		isRunning = true;
+		objects = std::make_unique<std::vector<std::unique_ptr<Entity>>>();
+		CreateScene();
 		return true;
 	}
 	SDL_Log("Failed to initialize SDL: %s", SDL_GetError());
 	return false;
+}
+
+void Game::CreateScene() const {
+	objects.get()->emplace_back(new Wall(0, 0, WINDOW_WIDTH, WALL_THICKNESS));
+	objects.get()->emplace_back(new Wall(0, WINDOW_HEIGHT - WALL_THICKNESS, WINDOW_WIDTH, WALL_THICKNESS));
 }
 
 void Game::Loop() {
@@ -52,6 +63,8 @@ void Game::Input() {
 			case SDL_QUIT:
 				isRunning = false;
 				break;
+			default:
+				break;
 		}
 	}
 	auto state = SDL_GetKeyboardState(nullptr);
@@ -65,6 +78,12 @@ void Game::Update() {
 }
 
 void Game::Output() {
+	DrawBackground();
+	DrawObjects();
+	SDL_RenderPresent(renderer);
+}
+
+void Game::DrawBackground() {
 	SDL_SetRenderDrawColor(
 		renderer,
 		105,
@@ -73,6 +92,17 @@ void Game::Output() {
 		255
 	);
 	SDL_RenderClear(renderer);
+}
 
-	SDL_RenderPresent(renderer);
+void Game::DrawObjects() {
+	SDL_SetRenderDrawColor(
+		renderer,
+		0,
+		0,
+		0,
+		255
+	);
+	for (const auto &ent : *objects.get()) {
+		ent->Draw(renderer);
+	}
 }
