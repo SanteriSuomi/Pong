@@ -1,6 +1,7 @@
 #pragma once
 
+template <typename T>
 struct Vector2 {
-	float x;
-	float y;
+	T x;
+	T y;
 };

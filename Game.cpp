@@ -3,6 +3,7 @@
 #include <memory>
 #include "Wall.h"
 #include "Constants.h"
+#include "Collision.h"
 
 bool Game::Initialize() {
 	int result = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
@@ -50,9 +51,15 @@ void Game::CreateScene() {
 
 void Game::Loop() {
 	while (isRunning) {
-		Input();
-		Update();
-		Output();
+		while (!SDL_TICKS_PASSED(SDL_GetTicks(), ticksCount + FRAME_TIME));
+		float deltaTime = (float)(SDL_GetTicks() - ticksCount) / 1000.0F;
+		if (deltaTime > MAX_DELTA_TIME) {
+			deltaTime = MAX_DELTA_TIME;
+		}
+		ticksCount = SDL_GetTicks();
+		Input(deltaTime);
+		Update(deltaTime);
+		Output(deltaTime);
 	}
 }
 
@@ -62,7 +69,7 @@ void Game::Shutdown() {
 	SDL_Quit();
 }
 
-void Game::Input() {
+void Game::Input(float deltaTime) {
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
@@ -77,15 +84,39 @@ void Game::Input() {
 	if (state[SDL_SCANCODE_ESCAPE]) {
 		isRunning = false;
 	}
-}
+	if (state[SDL_SCANCODE_W]) {
+		left->Move(0, -PADDLE_SPEED * deltaTime);
+	}
+	if (state[SDL_SCANCODE_S]) {
+		left->Move(0, PADDLE_SPEED * deltaTime);
+	}
 
-void Game::Update() {
-	for (const auto& ent : *objects) {
-		ent->Update();
+	if (state[SDL_SCANCODE_O]) {
+		right->Move(0, -PADDLE_SPEED * deltaTime);
+	}
+	if (state[SDL_SCANCODE_L]) {
+		right->Move(0, PADDLE_SPEED * deltaTime);
 	}
 }
 
-void Game::Output() {
+void Game::Update(float deltaTime) {
+	for (const auto &ent : *objects) {
+		Collision collision {
+			false,
+			nullptr
+		};
+		for (const auto &entColl : *objects) {
+			if (ent->Collides(entColl.get())) {
+				collision.collides = true;
+				collision.entity = entColl.get();
+				break;
+			}
+		}
+		ent->Update(deltaTime, &collision);
+	}
+}
+
+void Game::Output(float deltaTime) {
 	DrawBackground();
 	DrawObjects();
 	SDL_RenderPresent(renderer);

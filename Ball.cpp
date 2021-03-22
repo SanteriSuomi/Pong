@@ -1,13 +1,13 @@
 #include "Ball.h"
 
 Ball::Ball(float x, float y, float width, float height, float velX, float velY) : Entity::Entity(x, y, width, height) {
-	velocity = std::make_unique<Vector2>(Vector2 {
+	velocity = std::make_unique<Vector2<float>>(Vector2<float> {
 		velX,
 		velY
 		});
 }
 
-void Ball::Update() {
+void Ball::Update(float deltaTime, const Collision* collision) {
 	position->x += velocity->x;
 	position->y += velocity->y;
 }

@@ -16,6 +16,7 @@ private:
 	SDL_Window *window = nullptr;
 	SDL_Renderer* renderer = nullptr;
 	bool isRunning = false;
+	Uint32 ticksCount;
 	std::unique_ptr<std::vector<std::unique_ptr<Entity>>> objects;
 	Paddle *left;
 	Paddle *right;
@@ -23,9 +24,9 @@ private:
 
 	void CreateScene();
 
-	void Input();
-	void Update();
-	void Output();
+	void Input(float deltaTime);
+	void Update(float deltaTime);
+	void Output(float deltaTime);
 	void DrawBackground();
 	void DrawObjects();
 };
