@@ -1,8 +1,4 @@
 #include "Game.h"
-#include "Paddle.h"
-#include <memory>
-#include "Wall.h"
-#include "Constants.h"
 
 bool Game::Initialize() {
 	int result = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
@@ -38,13 +34,16 @@ bool Game::Initialize() {
 }
 
 void Game::CreateScene() {
-	objects->emplace_back(std::make_unique<Wall>(Wall(0, 0, WINDOW_WIDTH, WALL_THICKNESS)));
-	objects->emplace_back(std::make_unique<Wall>(Wall(0, WINDOW_HEIGHT - WALL_THICKNESS, WINDOW_WIDTH, WALL_THICKNESS)));
-	left = new Paddle(0, WINDOW_HEIGHT / 2 - (PADDLE_HEIGHT / 2), WALL_THICKNESS, PADDLE_HEIGHT);
-	right = new Paddle(WINDOW_WIDTH - WALL_THICKNESS, WINDOW_HEIGHT / 2 - (PADDLE_HEIGHT / 2), WALL_THICKNESS, PADDLE_HEIGHT);
+	upper = new Wall(0, 0, WINDOW_WIDTH, WALL_THICKNESS, "WallUpper");
+	lower = new Wall(0, WINDOW_HEIGHT - WALL_THICKNESS, WINDOW_WIDTH, WALL_THICKNESS, "WallLower");
+	objects->emplace_back(upper);
+	objects->emplace_back(lower);
+	left = new Paddle(0, WINDOW_HEIGHT / 2 - (PADDLE_HEIGHT / 2), WALL_THICKNESS, PADDLE_HEIGHT, "PaddleLeft");
+	right = new Paddle(WINDOW_WIDTH - WALL_THICKNESS, WINDOW_HEIGHT / 2 - (PADDLE_HEIGHT / 2), WALL_THICKNESS, PADDLE_HEIGHT, "PaddleRight");
 	objects->emplace_back(left);
 	objects->emplace_back(right);
-	ball = new Ball(WINDOW_WIDTH / 2 - (WALL_THICKNESS / 2), WINDOW_HEIGHT / 2 - (WALL_THICKNESS / 2), WALL_THICKNESS, WALL_THICKNESS, BALL_VEL_X, BALL_VEL_Y);
+	ball = new Ball(WINDOW_WIDTH / 2 - (WALL_THICKNESS / 2), WINDOW_HEIGHT / 2 - (WALL_THICKNESS / 2), WALL_THICKNESS, WALL_THICKNESS, 
+		BALL_VEL_X, BALL_VEL_Y, "Ball");
 	objects->emplace_back(ball);
 }
 
@@ -83,11 +82,24 @@ void Game::Input(float deltaTime) {
 	if (state[SDL_SCANCODE_ESCAPE]) {
 		isRunning = false;
 	}
+	
 	if (state[SDL_SCANCODE_W]) {
-		left->Move(0, -PADDLE_SPEED * deltaTime);
+		//Vector2<float> pos {
+		//	left->position->x,
+		//	left->position->y
+		//};
+		//if (!upper->Collides(pos, *left->size)) {
+		//	left->Move(0, -PADDLE_SPEED * deltaTime);
+		//}
+		// TO-DO improve 
+		if (!left->Collides(upper)) {
+			left->Move(0, -PADDLE_SPEED * deltaTime);
+		}
 	}
 	if (state[SDL_SCANCODE_S]) {
-		left->Move(0, PADDLE_SPEED * deltaTime);
+		if (!left->Collides(lower)) {
+			left->Move(0, PADDLE_SPEED * deltaTime);
+		}
 	}
 
 	if (state[SDL_SCANCODE_O]) {
@@ -98,16 +110,23 @@ void Game::Input(float deltaTime) {
 	}
 }
 
-void Game::Update(float deltaTime) {
+void Game::Update(float deltaTime) const {
+	std::unordered_set<std::string> collided; // TO-DO: necessary?
 	for (const auto &ent : *objects) {
-		const Entity *collision = nullptr;
 		for (const auto &entColl : *objects) {
-			if (ent->Collides(entColl.get())) {
-				collision = entColl.get();
+			if (ent != entColl 
+				&& ent->Collides(entColl.get()) 
+				&& (collided.count(ent->name) == 0 && collided.count(entColl->name) == 0)
+				&& SDL_TICKS_PASSED(SDL_GetTicks(), ent->collisionTicks + COLLISION_WAIT_PERIOD)) {
+				SDL_Log("Collision between: %s and %s", ent->name.c_str(), entColl->name.c_str());
+				collided.insert(ent->name);
+				collided.insert(entColl->name);
+				ent->collision = entColl.get();
+				ent->collisionTicks = SDL_GetTicks();
 				break;
 			}
 		}
-		ent->Update(deltaTime, collision);
+		ent->Update(deltaTime);
 	}
 }
 

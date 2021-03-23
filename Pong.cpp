@@ -1,4 +1,3 @@
-#include "SDL.h"
 #include "Game.h"
 
 int main(int, char**) {

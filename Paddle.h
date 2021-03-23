@@ -4,5 +4,5 @@
 
 class Paddle : public Entity {
 public:
-	Paddle(float x, float y, float width, float height);
+	Paddle(float x, float y, float width, float height, const std::string &name);
 };

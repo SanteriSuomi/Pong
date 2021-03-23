@@ -1,8 +1,6 @@
-#include "SDL.h"
 #include "Entity.h"
-#include <memory>
 
-Entity::Entity(float x, float y, float width, float height) {
+Entity::Entity(float x, float y, float width, float height, const std::string &name) : name(name) {
 	this->position = std::make_unique<Vector2<float>>(Vector2<float> {
 		x,
 		y
@@ -23,7 +21,7 @@ void Entity::Draw(SDL_Renderer *renderer) const {
 	SDL_RenderFillRect(renderer, &rect);
 }
 
-void Entity::Update(float deltaTime, const Entity *collision) {
+void Entity::Update(float deltaTime) {
 	// Overrideable
 }
 
@@ -38,5 +36,13 @@ bool Entity::Collides(const Entity *entity) const {
 	if (position->x - size->x / 2 > entity->position->x + entity->size->x / 2) return false;
 	if (position->y + size->y / 2 < entity->position->y - entity->size->y / 2) return false;
 	if (position->y - size->y / 2 > entity->position->y + entity->size->y / 2) return false;
+	return true;
+}
+
+bool Entity::Collides(const Vector2<float> pos, const Vector2<float> size) const {
+	if (position->x + this->size->x / 2 < pos.x - size.x / 2) return false;
+	if (position->x - this->size->x / 2 > pos.x + size.x / 2) return false;
+	if (position->y + this->size->y / 2 < pos.y - size.y / 2) return false;
+	if (position->y - this->size->y / 2 > pos.y + size.y / 2) return false;
 	return true;
 }

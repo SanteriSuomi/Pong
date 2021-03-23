@@ -4,5 +4,5 @@
 
 class Wall : public Entity {
 public:
-	Wall(float x, float y, float width, float height);
+	Wall(float x, float y, float width, float height, const std::string &name);
 };

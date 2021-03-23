@@ -4,8 +4,11 @@
 #include "Entity.h"
 #include "Paddle.h"
 #include "Ball.h"
+#include "Wall.h"
+#include "Constants.h"
 #include <memory>
 #include <vector>
+#include <unordered_set>
 
 class Game {
 public:
@@ -18,6 +21,8 @@ private:
 	bool isRunning = false;
 	Uint32 ticksCount;
 	std::unique_ptr<std::vector<std::unique_ptr<Entity>>> objects;
+	Wall *upper;
+	Wall *lower;
 	Paddle *left;
 	Paddle *right;
 	Ball* ball;
@@ -25,7 +30,7 @@ private:
 	void CreateScene();
 
 	void Input(float deltaTime);
-	void Update(float deltaTime);
+	void Update(float deltaTime) const;
 	void Output(float deltaTime);
 	void DrawBackground();
 	void DrawObjects();
