@@ -1,6 +1,5 @@
 #include "SDL.h"
 #include "Entity.h"
-#include "Collision.h"
 #include <memory>
 
 Entity::Entity(float x, float y, float width, float height) {
@@ -24,7 +23,7 @@ void Entity::Draw(SDL_Renderer *renderer) const {
 	SDL_RenderFillRect(renderer, &rect);
 }
 
-void Entity::Update(float deltaTime, const Collision *collision) {
+void Entity::Update(float deltaTime, const Entity *collision) {
 	// Overrideable
 }
 

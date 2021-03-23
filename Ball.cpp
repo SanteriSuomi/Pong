@@ -7,7 +7,7 @@ Ball::Ball(float x, float y, float width, float height, float velX, float velY) 
 		});
 }
 
-void Ball::Update(float deltaTime, const Collision* collision) {
+void Ball::Update(float deltaTime, const Entity *collision) {
 	position->x += velocity->x;
 	position->y += velocity->y;
 }

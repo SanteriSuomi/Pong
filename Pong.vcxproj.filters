@@ -68,8 +68,5 @@
     <ClInclude Include="Ball.h">
       <Filter>Source Files\Entities</Filter>
     </ClInclude>
-    <ClInclude Include="Collision.h">
-      <Filter>Source Files\Data</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

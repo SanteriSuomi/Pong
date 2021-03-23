@@ -72,8 +72,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)\SDL2-2.0.14\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)\SDL2\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)\SDL2\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -154,7 +154,6 @@
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Entity.h" />
-    <ClInclude Include="Collision.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Paddle.h" />
     <ClInclude Include="Wall.h" />

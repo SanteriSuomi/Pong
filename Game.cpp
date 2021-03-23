@@ -3,7 +3,6 @@
 #include <memory>
 #include "Wall.h"
 #include "Constants.h"
-#include "Collision.h"
 
 bool Game::Initialize() {
 	int result = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
@@ -101,18 +100,14 @@ void Game::Input(float deltaTime) {
 
 void Game::Update(float deltaTime) {
 	for (const auto &ent : *objects) {
-		Collision collision {
-			false,
-			nullptr
-		};
+		const Entity *collision = nullptr;
 		for (const auto &entColl : *objects) {
 			if (ent->Collides(entColl.get())) {
-				collision.collides = true;
-				collision.entity = entColl.get();
+				collision = entColl.get();
 				break;
 			}
 		}
-		ent->Update(deltaTime, &collision);
+		ent->Update(deltaTime, collision);
 	}
 }
 
