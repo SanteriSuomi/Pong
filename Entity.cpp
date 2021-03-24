@@ -32,17 +32,21 @@ void Entity::Move(float x, float y) const {
 
 bool Entity::Collides(const Entity *entity) const {
 	if (!entity) return false;
-	if (position->x + size->x / 2 < entity->position->x - entity->size->x / 2) return false;
-	if (position->x - size->x / 2 > entity->position->x + entity->size->x / 2) return false;
-	if (position->y + size->y / 2 < entity->position->y - entity->size->y / 2) return false;
-	if (position->y - size->y / 2 > entity->position->y + entity->size->y / 2) return false;
-	return true;
+	if (position->x < entity->position->x + entity->size->x &&
+		position->x + size->x > entity->position->x &&
+		position->y < entity->position->y + entity->size->y &&
+		position->y + size->y > entity->position->y) {
+		return true;
+	}
+	return false;
 }
 
-bool Entity::Collides(const Vector2<float> pos, const Vector2<float> size) const {
-	if (position->x + this->size->x / 2 < pos.x - size.x / 2) return false;
-	if (position->x - this->size->x / 2 > pos.x + size.x / 2) return false;
-	if (position->y + this->size->y / 2 < pos.y - size.y / 2) return false;
-	if (position->y - this->size->y / 2 > pos.y + size.y / 2) return false;
-	return true;
+bool Entity::Collides(const Vector2<float> pos, const Vector2<float> sz) const {
+	if (position->x < pos.x + sz.x &&
+		position->x + size->x > pos.x &&
+		position->y < pos.y + pos.y &&
+		position->y + size->y > pos.y) {
+		return true;
+	}
+	return false;
 }

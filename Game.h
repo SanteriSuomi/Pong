@@ -8,7 +8,6 @@
 #include "Constants.h"
 #include <memory>
 #include <vector>
-#include <unordered_set>
 
 class Game {
 public:
@@ -23,6 +22,8 @@ private:
 	std::unique_ptr<std::vector<std::unique_ptr<Entity>>> objects;
 	Wall *upper;
 	Wall *lower;
+	Wall *leftW;
+	Wall *rightW;
 	Paddle *left;
 	Paddle *right;
 	Ball* ball;
@@ -34,4 +35,6 @@ private:
 	void Output(float deltaTime);
 	void DrawBackground();
 	void DrawObjects();
+	void CheckCollisions(Entity *ent) const;
+	void PaddleInput(const Uint8 *state, float deltaTime) const;
 };

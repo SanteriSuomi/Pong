@@ -10,7 +10,13 @@ Ball::Ball(float x, float y, float width, float height, float velX, float velY, 
 
 void Ball::Update(float deltaTime) {
 	if (collision) {
-		velocity->x *= -1;
+		if (collision->name == "WallUpper" || collision->name == "WallLower") {
+			velocity->y *= -1;
+		} else if (collision->name == "PaddleLeft" || collision->name == "PaddleRight") {
+			velocity->x *= -1;
+		} else { // Collided with left or right walls
+			SDL_Quit();
+		}
 		collision = nullptr;
 		return;
 	}
